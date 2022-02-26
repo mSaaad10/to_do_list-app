@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Todo {
+  static const String collectionName = 'todos';
   late String title;
   late String description;
   late bool isDone;
@@ -12,11 +13,11 @@ class Todo {
       required this.description,
       this.isDone = false,
       required this.title,
-      String id = ''});
+      this.id = ''});
 
   Todo.fromJson(Map<String, dynamic> json) {
     Timestamp timestamp = json['dateTime'] as Timestamp;
-    //id = json['id']! as String;
+    id = json['id']! as String;
     title = json['title']! as String;
     description = json['description']! as String;
     isDone = json['isDone']! as bool;
@@ -25,7 +26,7 @@ class Todo {
 
   Map<String, dynamic> toJson() {
     return {
-      //  'id': id,
+      'id': id,
       'title': title,
       'description': description,
       'isDone': isDone,

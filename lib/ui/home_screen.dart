@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:to_do_list_route/providers/AppConfigProvider.dart';
 import 'package:to_do_list_route/ui/addTask_bottom_sheet.dart';
 import 'package:to_do_list_route/ui/todo_list_tab.dart';
 import 'package:to_do_list_route/ui/todo_setting_tab.dart';
@@ -16,11 +18,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AppConfigProvider provider = Provider.of(context);
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * .2,
         elevation: 0,
-        title: Text(AppLocalizations.of(context)!.todoapp),
+        title: currentIndex == 0
+            ? Text(AppLocalizations.of(context)!.todoapp)
+            : Text(AppLocalizations.of(context)!.setting),
       ),
       floatingActionButton: FloatingActionButton(
         shape: StadiumBorder(side: BorderSide(color: Colors.white, width: 4)),
@@ -40,25 +45,35 @@ class _HomeScreenState extends State<HomeScreen> {
         notchMargin: 8,
         clipBehavior: Clip.antiAlias,
         child: BottomNavigationBar(
+          backgroundColor: provider.mode == ThemeMode.dark
+              ? Color.fromARGB(255, 20, 25, 34)
+              : Colors.white,
           currentIndex: currentIndex,
           onTap: (index) {
             currentIndex = index;
             setState(() {});
           },
           elevation: 0,
-          showSelectedLabels: false,
+          showSelectedLabels: true,
           showUnselectedLabels: false,
+          selectedItemColor: Colors.blue,
           items: [
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.list,
                   size: 27,
+                  color: provider.mode == ThemeMode.light
+                      ? Colors.grey
+                      : Colors.white,
                 ),
                 label: ''),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.settings,
                   size: 27,
+                  color: provider.mode == ThemeMode.light
+                      ? Colors.grey
+                      : Colors.white,
                 ),
                 label: ''),
           ],

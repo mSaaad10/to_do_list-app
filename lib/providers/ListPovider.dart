@@ -6,10 +6,11 @@ class ListProvider extends ChangeNotifier {
   List<Todo> items = [];
 
   void refreshTodo() {
+    print('in refresh');
     getTodosRefWithConverters().get().then((documentsSnapshot) {
       documentsSnapshot.docs.map((document) {
         return document.data();
-      }).toList();
+      });
       notifyListeners();
     });
   }

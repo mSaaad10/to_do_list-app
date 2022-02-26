@@ -1,9 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:to_do_list_route/Datebase/Models/FirebaseUtils.dart';
-import 'package:to_do_list_route/Datebase/Models/Todo.dart';
-import 'package:to_do_list_route/providers/ListPovider.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   @override
@@ -15,15 +12,15 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   String description = '';
   bool isDone = false;
   DateTime dateTime = DateTime.now();
-  late CollectionReference todosRef;
 
   @override
   void initState() {
-    todosRef =
-        FirebaseFirestore.instance.collection('movies').withConverter<Todo>(
-              fromFirestore: (snapshot, _) => Todo.fromJson(snapshot.data()!),
-              toFirestore: (todo, _) => todo.toJson(),
-            );
+    getTodosRefWithConverters();
+    // todosRef =
+    //     FirebaseFirestore.instance.collection(Todo.collectionName).withConverter<Todo>(
+    //           fromFirestore: (snapshot, _) => Todo.fromJson(snapshot.data()!),
+    //           toFirestore: (todo, _) => todo.toJson(),
+    //         );
     // TODO: implement initState
     super.initState();
   }
@@ -32,7 +29,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    ListProvider listProvider = Provider.of(context);
+    // ListProvider listProvider = Provider.of(context);
 
     return SingleChildScrollView(
       child: Container(
@@ -40,15 +37,14 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
             color: Theme.of(context).accentColor,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(25), topRight: Radius.circular(25))),
-        margin: EdgeInsets.all(10),
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        height: 500,
+        height: 360,
         child: Form(
           key: formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text('AddTodo', style: Theme.of(context).textTheme.subtitle1),
+              Text('Add Todo', style: Theme.of(context).textTheme.subtitle1),
               TextFormField(
                 validator: (text) {
                   if (text == null || text.isEmpty) {
@@ -72,12 +68,15 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 onChanged: (text) {
                   description = text;
                 },
-                decoration: InputDecoration(labelText: 'description'),
+                decoration: InputDecoration(
+                    labelStyle: Theme.of(context).textTheme.subtitle1,
+                    labelText: 'description'),
               ),
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: Text(
                   'Date',
+                  style: Theme.of(context).textTheme.subtitle1,
                 ),
               ),
               InkWell(
@@ -87,17 +86,24 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    dateTime.toString(),
+                    DateFormat.yMMMEd().format(dateTime),
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    addTodo();
-                    listProvider.refreshTodo();
-                  },
-                  child: Text('Add'))
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(5),
+                  bottomRight: Radius.circular(5),
+                ),
+                child: ElevatedButton(
+                    onPressed: () {
+                      addTodo();
+                      Navigator.pop(context);
+                      // listProvider.refreshTodo();
+                    },
+                    child: Text('Add')),
+              )
             ],
           ),
         ),
@@ -107,18 +113,18 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
 
   void addTodo() {
     if (!formKey.currentState!.validate()) return;
-    Todo todo =
-        Todo(dateTime: dateTime, description: description, title: title);
-    DocumentReference doc = getTodosRefWithConverters().doc();
-    todo.id = doc.id;
-    doc.set(todo);
-    Navigator.pop(context);
+
+    addTodoToFireStore(
+      title,
+      description,
+      dateTime,
+    );
   }
 
   void showDateDialoge() {
     showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
+        context: context,
+            initialDate: this.dateTime,
             firstDate: DateTime.now(),
             lastDate: DateTime.now().add(Duration(days: 365)))
         .then((date) {

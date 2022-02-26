@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:to_do_list_route/Datebase/Models/FirebaseUtils.dart';
+import 'package:to_do_list_route/Datebase/Models/Todo.dart';
 import 'package:to_do_list_route/providers/ListPovider.dart';
 import 'package:to_do_list_route/ui/to_do_item.dart';
 
@@ -13,10 +17,13 @@ class _TodoListState extends State<TodoList> {
   DateTime selectedDay = DateTime.now();
   DateTime focusedDay = DateTime.now();
 
+  getCurrentDate(DateTime selectedDay) {
+    return DateFormat('yyyy-MM-dd – kk:mm').format(selectedDay);
+  }
+
   @override
   Widget build(BuildContext context) {
     ListProvider listProvider = Provider.of(context);
-    listProvider.refreshTodo();
     return Container(
       child: Column(
         children: [
@@ -49,13 +56,31 @@ class _TodoListState extends State<TodoList> {
             lastDay: DateTime.now().add(Duration(days: 365)),
           ),
           Expanded(
-            child: ListView.builder(
-              itemBuilder: (buildContext, index) {
-                return TodoItem(listProvider.items[index]);
+            child: StreamBuilder<QuerySnapshot<Todo>>(
+              stream: getTodosRefWithConverters()
+                  // .where('dateTime', isEqualTo: getCurrentDate(selectedDay))
+                  .snapshots(),
+              builder: (BuildContext buildContext,
+                  AsyncSnapshot<QuerySnapshot<Todo>> snapshot) {
+                if (snapshot.hasError) {
+                  return Text("Something went wrong");
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+
+                List<Todo> item =
+                    snapshot.data!.docs.map((doc) => doc.data()).toList();
+                return ListView.builder(
+                  itemBuilder: (buildContext, index) {
+                    return TodoItem(item[index]);
+                  },
+                  itemCount: item.length,
+                );
               },
-              itemCount: listProvider.items.length,
             ),
-          )
+          ),
         ],
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:to_do_list_route/my_theme_data.dart';
 import 'package:to_do_list_route/providers/AppConfigProvider.dart';
 import 'package:to_do_list_route/ui/language_bottom_sheet.dart';
 
@@ -20,13 +21,19 @@ class _TodoSettingState extends State<TodoSetting> {
           margin: EdgeInsets.symmetric(vertical: 10, horizontal: 17),
           child: Text(
             AppLocalizations.of(context)!.language,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.headline2,
           )),
       Container(
         padding: EdgeInsets.all(12),
         margin: EdgeInsets.symmetric(vertical: 16, horizontal: 30),
         decoration: BoxDecoration(
-          color: Colors.white,
+          border: Border.all(
+            color: Color.fromARGB(255, 93, 156, 236),
+            width: 3,
+          ),
+          color: provider.mode == ThemeMode.dark
+              ? MyThemeData.darkBackgroundColor
+              : Colors.white,
         ),
         child: InkWell(
           onTap: () {
@@ -34,9 +41,8 @@ class _TodoSettingState extends State<TodoSetting> {
           },
           child: Row(
             children: [
-              Text(
-                provider.language == 'en' ? 'English' : 'العربية',
-              ),
+              Text(provider.language == 'en' ? 'English' : 'العربية',
+                  style: Theme.of(context).textTheme.headline1),
               Spacer(),
               Icon(
                 Icons.arrow_downward_outlined,
@@ -50,13 +56,19 @@ class _TodoSettingState extends State<TodoSetting> {
           margin: EdgeInsets.symmetric(vertical: 10, horizontal: 17),
           child: Text(
             AppLocalizations.of(context)!.mode,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.headline2,
           )),
       Container(
         padding: EdgeInsets.all(12),
         margin: EdgeInsets.symmetric(vertical: 16, horizontal: 30),
         decoration: BoxDecoration(
-          color: Colors.white,
+          border: Border.all(
+            color: Color.fromARGB(255, 93, 156, 236),
+            width: 3,
+          ),
+          color: provider.mode == ThemeMode.dark
+              ? MyThemeData.darkBackgroundColor
+              : Colors.white,
         ),
         child: InkWell(
           onTap: () {
@@ -64,9 +76,11 @@ class _TodoSettingState extends State<TodoSetting> {
           },
           child: Row(
             children: [
-              Text(provider.mode == ThemeMode.light
-                  ? AppLocalizations.of(context)!.light
-                  : AppLocalizations.of(context)!.dark),
+              Text(
+                  provider.mode == ThemeMode.light
+                      ? AppLocalizations.of(context)!.light
+                      : AppLocalizations.of(context)!.dark,
+                  style: Theme.of(context).textTheme.headline1),
               Spacer(),
               Icon(
                 Icons.arrow_downward_outlined,

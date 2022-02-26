@@ -1,15 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
 import 'package:to_do_list_route/Datebase/Models/Todo.dart';
+import 'package:to_do_list_route/providers/AppConfigProvider.dart';
 
 class TodoItem extends StatelessWidget {
   final Todo item;
 
   TodoItem(this.item);
-
   @override
   Widget build(BuildContext context) {
+    AppConfigProvider provider = Provider.of(context);
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -26,7 +29,9 @@ class TodoItem extends StatelessWidget {
             children: [
               SlidableAction(
                 autoClose: true,
-                onPressed: null,
+                onPressed: (context) {
+                  provider.deleteUser(item.id);
+                },
                 backgroundColor: Color(0xFFFE4A49),
                 foregroundColor: Colors.white,
                 icon: Icons.delete,
@@ -40,7 +45,9 @@ class TodoItem extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
                     bottomLeft: Radius.circular(12)),
-                color: Colors.white),
+                color: provider.mode == ThemeMode.light
+                    ? Colors.white
+                    : Color.fromARGB(255, 20, 25, 34)),
             child: Row(
               children: [
                 Container(
@@ -52,17 +59,23 @@ class TodoItem extends StatelessWidget {
                     child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 18.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.title,
-                        style: Theme.of(context).textTheme.headline1,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline1!
+                            .copyWith(fontSize: 20),
                       ),
-                      Text(item.description,
-                          style: Theme.of(context).textTheme.subtitle1)
+                          Text(item.description,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(fontSize: 20))
                     ],
-                  ),
-                )),
+                      ),
+                    )),
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 6, horizontal: 14),
                   decoration: BoxDecoration(
