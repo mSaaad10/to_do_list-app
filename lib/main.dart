@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -12,11 +11,11 @@ import 'package:to_do_list_route/ui/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseFirestore.instance.disableNetwork();
-  FirebaseFirestore.instance.settings =
-      Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
-  FirebaseFirestore.instance.settings = Settings(persistenceEnabled: false);
-  runApp(ChangeNotifierProvider(
+  // await FirebaseFirestore.instance.disableNetwork();
+  // FirebaseFirestore.instance.settings =
+  //     Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+  // FirebaseFirestore.instance.settings = Settings(persistenceEnabled: true);
+  runApp(ChangeNotifierProvider<ListProvider>(
     create: (_) => ListProvider(),
     child: ChangeNotifierProvider(
         create: (_) => AppConfigProvider(), child: MyApp()),

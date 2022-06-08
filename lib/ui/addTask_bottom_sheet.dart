@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:to_do_list_route/Datebase/Models/FirebaseUtils.dart';
+
+import '../providers/ListPovider.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   @override
@@ -13,28 +16,28 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   bool isDone = false;
   DateTime dateTime = DateTime.now();
 
-  @override
-  void initState() {
-    getTodosRefWithConverters();
-    // todosRef =
-    //     FirebaseFirestore.instance.collection(Todo.collectionName).withConverter<Todo>(
-    //           fromFirestore: (snapshot, _) => Todo.fromJson(snapshot.data()!),
-    //           toFirestore: (todo, _) => todo.toJson(),
-    //         );
-    // TODO: implement initState
-    super.initState();
-  }
+  // void initState() {
+  //
+  //   getTodosRefWithConverters();
+  //   // todosRef =
+  //   //     FirebaseFirestore.instance.collection(Todo.collectionName).withConverter<Todo>(
+  //   //           fromFirestore: (snapshot, _) => Todo.fromJson(snapshot.data()!),
+  //   //           toFirestore: (todo, _) => todo.toJson(),
+  //   //         );
+  //   // TODO: implement initState
+  //   super.initState();
+  // }
 
   final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    // ListProvider listProvider = Provider.of(context);
+    ListProvider listProvider = Provider.of(context);
 
     return SingleChildScrollView(
       child: Container(
         decoration: BoxDecoration(
-            color: Theme.of(context).accentColor,
+            color: Theme.of(context).colorScheme.secondary,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(25), topRight: Radius.circular(25))),
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -50,6 +53,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   if (text == null || text.isEmpty) {
                     return 'Enter a valid Title';
                   }
+                  return null;
                 },
                 onChanged: (text) {
                   title = text;
@@ -64,6 +68,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   if (text == null || text.isEmpty) {
                     return 'Enter a Description Title';
                   }
+                  return null;
                 },
                 onChanged: (text) {
                   description = text;
@@ -88,6 +93,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   child: Text(
                     DateFormat.yMMMEd().format(dateTime),
                     textAlign: TextAlign.center,
+                    style: TextStyle(color: Theme.of(context).primaryColorDark),
                   ),
                 ),
               ),
@@ -99,8 +105,10 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 child: ElevatedButton(
                     onPressed: () {
                       addTodo();
+                      Future.delayed(Duration(milliseconds: 500), () {
+                        listProvider.refreshTodo();
+                      });
                       Navigator.pop(context);
-                      // listProvider.refreshTodo();
                     },
                     child: Text('Add')),
               )
@@ -118,20 +126,19 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       title,
       description,
       dateTime,
-    );
+    ).then((value) {
+      print('added $dateTime');
+    });
   }
 
-  void showDateDialoge() {
-    showDatePicker(
-        context: context,
+  Future<void> showDateDialoge() {
+    return showDatePicker(
+            context: context,
             initialDate: this.dateTime,
             firstDate: DateTime.now(),
             lastDate: DateTime.now().add(Duration(days: 365)))
         .then((date) {
-      if (date != null) {
-        this.dateTime = date;
-        setState(() {});
-      }
+      this.dateTime = date!;
     });
   }
 }

@@ -23,15 +23,5 @@ Future<void> addTodoToFireStore(
       title: title);
 
   return await documentReference.set(item);
-  // doc.set(todos).catchError((error) {
-  //   print('in on error ${error.toString()}');
-  // });
 }
 
-// Future<void> deleteUser(String id) {
-//   return getTodosRefWithConverters()
-//       .doc(id)
-//       .delete()
-//       .then((value) => print("User Deleted"))
-//       .catchError((error) => print("Failed to delete user: $error"));
-// }

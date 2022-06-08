@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Todo {
   static const String collectionName = 'todos';
   late String title;
@@ -16,12 +14,12 @@ class Todo {
       this.id = ''});
 
   Todo.fromJson(Map<String, dynamic> json) {
-    Timestamp timestamp = json['dateTime'] as Timestamp;
+    // Timestamp timestamp = json['dateTime'] as Timestamp;
     id = json['id']! as String;
     title = json['title']! as String;
     description = json['description']! as String;
     isDone = json['isDone']! as bool;
-    dateTime = timestamp.toDate();
+    dateTime = DateTime.fromMillisecondsSinceEpoch(json['dateTime']! as int);
   }
 
   Map<String, dynamic> toJson() {
@@ -30,7 +28,7 @@ class Todo {
       'title': title,
       'description': description,
       'isDone': isDone,
-      'dateTime': dateTime,
+      'dateTime': dateTime.millisecondsSinceEpoch,
     };
   }
 }

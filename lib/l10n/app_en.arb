@@ -1,8 +1,8 @@
 {
-"mode":"Mode",
-"language":"Language",
-"dark":"Dark",
-"light":"Light",
-"todoapp":"ToDoApp"
-"setting":"Setting"
+  "mode": "Mode",
+  "language": "Language",
+  "dark": "Dark",
+  "light": "Light",
+  "todoapp": "ToDoApp",
+  "setting": "Setting"
 }
