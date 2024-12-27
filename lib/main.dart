@@ -11,10 +11,7 @@ import 'package:to_do_list_route/ui/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // await FirebaseFirestore.instance.disableNetwork();
-  // FirebaseFirestore.instance.settings =
-  //     Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
-  // FirebaseFirestore.instance.settings = Settings(persistenceEnabled: true);
+
   runApp(ChangeNotifierProvider<ListProvider>(
     create: (_) => ListProvider(),
     child: ChangeNotifierProvider(
